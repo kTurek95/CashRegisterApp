@@ -1,6 +1,5 @@
 import io.github.cdimascio.dotenv.Dotenv;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -107,7 +106,7 @@ public class Server
                         int affectedRows = updateStatement.executeUpdate();
                         if (affectedRows > 0)
                         {
-                            JOptionPane.showMessageDialog(null,"Transaction completed.");
+                            System.out.println("Quantity updated successfully.");
                         }
                         else
                         {
@@ -116,7 +115,7 @@ public class Server
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(null,"Not enough quantity available.");
+                        System.out.println("Not enough quantity available.");
                     }
                 }
                 else
