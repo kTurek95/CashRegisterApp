@@ -1,5 +1,4 @@
 import io.github.cdimascio.dotenv.Dotenv;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -78,7 +77,7 @@ public class Server
         return productsPrice;
     }
 
-    public static void updateProductQuantity(String productName, String productQuantity)
+    public static String updateProductQuantity(String productName, String productQuantity)
     {
         int intProductQuantity = Integer.parseInt(productQuantity);
 
@@ -106,21 +105,21 @@ public class Server
                         int affectedRows = updateStatement.executeUpdate();
                         if (affectedRows > 0)
                         {
-                            System.out.println("Quantity updated successfully.");
+                            return "Quantity updated successfully.";
                         }
                         else
                         {
-                            System.out.println("No rows affected.");
+                            return "No rows affected.";
                         }
                     }
                     else
                     {
-                        System.out.println("Not enough quantity available.");
+                        return "Not enough quantity available.";
                     }
                 }
                 else
                 {
-                    System.out.println("Product not found.");
+                    return "Product not found.";
                 }
 
             }
@@ -128,6 +127,7 @@ public class Server
             {
                 e.printStackTrace();
             }
+        return "Database connection fault.";
     }
 
 
@@ -156,11 +156,9 @@ static class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        BufferedReader in = null;
-        PrintWriter out = null;
         try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
             System.out.println("New client handler started");
 
@@ -191,16 +189,14 @@ static class ClientHandler implements Runnable {
 
             try
             {
-                String productNameFromClient;
-                productNameFromClient = in.readLine();
+                String productNameFromClient = in.readLine();
                 if (productNameFromClient != null) {
                     System.out.println("Product Name: " + productNameFromClient);
                 } else {
                     System.out.println("Product Name is null");
                 }
 
-                String amountOfProductFromClient;
-                amountOfProductFromClient = in.readLine();
+                String amountOfProductFromClient = in.readLine();
                 if (amountOfProductFromClient != null) {
                     System.out.println("Amount of product: " + amountOfProductFromClient);
                 } else {
@@ -208,8 +204,10 @@ static class ClientHandler implements Runnable {
                 }
 
                 if (productNameFromClient != null && amountOfProductFromClient != null) {
-                    Server.updateProductQuantity(productNameFromClient, amountOfProductFromClient);
-                    out.println("Quantity updated");
+                    out.println("TRANSACTION MESSAGE");
+                    String message = Server.updateProductQuantity(productNameFromClient, amountOfProductFromClient);
+                    out.println(message);
+                    System.out.println("Sent message to client: " + message);
                 } else {
                     out.println("Failed to update quantity");
                 }
