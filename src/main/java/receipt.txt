@@ -1,0 +1,2 @@
+PRODUCT A quantity: 3
+Transaction value: 32.97
